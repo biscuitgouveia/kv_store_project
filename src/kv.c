@@ -46,7 +46,8 @@ int kv_put(kv_t *db, const char *key, const char *value) {
                     return -1;
                 };
                 entry->value = newval;
-                return real_idx;
+                //return real_idx;
+                return 0;
             }
         
         // land in empty, NULL, or tombstoned slot
@@ -61,7 +62,8 @@ int kv_put(kv_t *db, const char *key, const char *value) {
             entry->key = newkey;
             entry->value = newval;
             db->count++;
-            return real_idx;    
+            //return real_idx;    
+            return 0;
         }
     }
 
