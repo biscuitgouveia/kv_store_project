@@ -80,8 +80,8 @@ int kv_put(kv_t *db, char *key, char *value) {
                     return -1;
                 };
                 entry->value = newval;
-                //return real_idx;
-                return 0;
+                return real_idx;
+                // return 0;
             }
         
         // land in empty, NULL, or tombstoned slot
@@ -96,14 +96,52 @@ int kv_put(kv_t *db, char *key, char *value) {
             entry->key = newkey;
             entry->value = newval;
             db->count++;
-            //return real_idx;    
-            return 0;
+            return real_idx;    
+            // return 0;
         }
     }
 
     // the db is fully occupied
-    return -1;
+    return -2;
 
+}
+
+// Deletes a key value entry from db.
+//
+// params:
+//  - db: a pointer to the db
+//  - key: a pointer to the key value
+//
+// returns: the  index of the deletion
+// or -1 if not found
+int kv_delete(kv_t *db, char *key) {
+    if (!db || !key)  return -1;
+
+    size_t idx = hash(key, db->capacity);
+
+    for (int i = 0; i < db->capacity -1; i++) {
+        size_t real_idx = (idx + i) % db->capacity;
+
+        kv_entry_t *entry = &db->entries[real_idx];
+
+        if (entry->key == NULL) {
+            return -1;
+        }
+
+        if (entry->key && 
+            entry->key != TOMBSTONE && 
+            !strcmp(entry->key, key)) {
+                free(entry->key);
+                free(entry->value);
+                db->count--;
+                entry->key = TOMBSTONE;
+                entry->value = NULL;
+
+                return real_idx;
+        }
+    }
+
+    return -1;
 }
 
 // Initialises an empty kv store.

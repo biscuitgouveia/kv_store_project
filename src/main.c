@@ -24,4 +24,9 @@ int main() {
     char *val3 = kv_get(table, "this_doesn't_exist");
 
     printf("%s\n%s\n%s\n", val, val2, val3);
+
+    kv_delete(table, "hehe");
+    val = NULL;
+    val = kv_get(table, "hehe");
+    printf("%s\n%s\n%s\n", val, val2, val3);
 }
