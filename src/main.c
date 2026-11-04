@@ -29,4 +29,8 @@ int main() {
     val = NULL;
     val = kv_get(table, "hehe");
     printf("%s\n%s\n%s\n", val, val2, val3);
+
+    kv_free(table);
+    table = NULL;
+
 }
