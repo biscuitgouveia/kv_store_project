@@ -17,6 +17,40 @@ int hash(char *val, size_t capacity) {
     return hash % capacity;
 }
 
+// Gets a key-value pair from a database db.
+//
+// params:
+//  - db: a pointer to the db
+//  - key: a pointer to the key value
+//
+// returns: a pointer to the key, returns
+// NULL if not found
+char *kv_get(kv_t *db, char *key) {
+    if (!db || !key)  return NULL;
+
+    size_t idx = hash(key, db->capacity);
+
+    for (int i = 0; i < db->capacity -1; i++) {
+        size_t real_idx = (idx + i) % db->capacity;
+
+        kv_entry_t *entry = &db->entries[real_idx];
+
+        // key doesn't exist, return NULL
+        if (entry->key == NULL) {
+            return NULL;
+        }
+
+        // found entry and keys match
+        if (entry->key && 
+            entry->key != TOMBSTONE && 
+            !strcmp(entry->key, key)) {
+            return entry->value;
+        }
+    }
+
+    return NULL;
+}
+
 // Inserts a key-value pair into a database db.
 //
 // params:
@@ -26,7 +60,7 @@ int hash(char *val, size_t capacity) {
 //
 // returns: The index of the key, otherwise on
 // error returns -1, on not found returns -2
-int kv_put(kv_t *db, const char *key, const char *value) {
+int kv_put(kv_t *db, char *key, char *value) {
     if (!db || !key || !value)  return -1;
 
     size_t idx = hash(key, db->capacity);
@@ -68,7 +102,7 @@ int kv_put(kv_t *db, const char *key, const char *value) {
     }
 
     // the db is fully occupied
-    return -2;
+    return -1;
 
 }
 
