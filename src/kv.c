@@ -79,6 +79,7 @@ int kv_put(kv_t *db, char *key, char *value) {
                     free(newval);
                     return -1;
                 };
+                free(entry->value);
                 entry->value = newval;
                 // return real_idx;
                 return 0;
